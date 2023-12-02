@@ -46,9 +46,12 @@ func (rouy Rouy) Listen(config Config) error {
 		}
 
 		var body map[string]interface{}
-		if err := json.Unmarshal(bodyRead, &body); err != nil {
-			http.Error(w, "Error parsing request body", http.StatusBadRequest)
-			return
+
+		if len(bodyRead) > 0 {
+			if err := json.Unmarshal(bodyRead, &body); err != nil {
+				http.Error(w, "Error parsing request body", http.StatusBadRequest)
+				return
+			}
 		}
 
 		if rouy.Logger {
