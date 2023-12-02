@@ -78,10 +78,16 @@ func main() {
 		Path:   "/mid",
 		Handler: func(ctx rouy.Context) *rouy.Response {
 			fmt.Println("mid 2")
-			// return ctx.Text(200, "mid 2")
-			return nil
+			return ctx.Text(200, "mid 2")
+			// return nil
 		},
 	})
+
+	app.NotFound = func(ctx rouy.Context) *rouy.Response {
+		return ctx.JSON(404, map[string]interface{}{
+			"message": "not found",
+		})
+	}
 
 	config := rouy.Config{
 		Host: "127.0.0.1",

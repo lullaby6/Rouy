@@ -30,6 +30,7 @@ type Config struct {
 type Rouy struct {
 	Middlewares []Route
 	Routes      []Route
+	NotFound    HandleFunc
 	Config      Config
 	Logger      bool
 }
@@ -68,20 +69,12 @@ func respondeHandler(w http.ResponseWriter, response *Response) bool {
 	return true
 }
 
-func requestHandler(routes []Route, w http.ResponseWriter, r *http.Request, context Context) bool {
-	for _, route := range routes {
-		if r.Method == route.Method && r.URL.Path == route.Path {
-			response := route.Handler(context)
+func requestHandler(route Route, w http.ResponseWriter, r *http.Request, context Context) bool {
+	response := route.Handler(context)
 
-			responseHandlerResult := respondeHandler(w, response)
+	responseHandlerResult := respondeHandler(w, response)
 
-			if responseHandlerResult {
-				return true
-			}
-		}
-	}
-
-	return false
+	return responseHandlerResult
 }
 
 func (rouy Rouy) Listen(config Config) error {
@@ -116,12 +109,28 @@ func (rouy Rouy) Listen(config Config) error {
 			Body:     body,
 		}
 
-		if requestHandler(rouy.Middlewares, w, r, context) {
-			return
+		for _, middleware := range rouy.Middlewares {
+			if r.Method == middleware.Method && r.URL.Path == middleware.Path {
+				if requestHandler(middleware, w, r, context) {
+					return
+				}
+			}
 		}
 
-		if requestHandler(rouy.Routes, w, r, context) {
-			return
+		for _, route := range rouy.Routes {
+			if r.Method == route.Method && r.URL.Path == route.Path {
+				if requestHandler(route, w, r, context) {
+					return
+				}
+			}
+		}
+
+		if rouy.NotFound != nil {
+			if requestHandler(Route{
+				Handler: rouy.NotFound,
+			}, w, r, context) {
+				return
+			}
 		}
 
 		http.NotFound(w, r)
