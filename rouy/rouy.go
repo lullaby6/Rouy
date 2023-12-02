@@ -14,7 +14,7 @@ type Response struct {
 	Body        interface{}
 }
 
-func HandleResponse(statusCode int, contentType string, body interface{}) *Response {
+func FuncResponse(statusCode int, contentType string, body interface{}) *Response {
 	return &Response{
 		ContentType: contentType,
 		StatusCode:  statusCode,
