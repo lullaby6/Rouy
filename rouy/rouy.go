@@ -41,13 +41,13 @@ func (rouy Rouy) Listen(config Config) error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		bodyRead, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
+			http.Error(w, "Error reading request body", http.StatusBadRequest)
 			return
 		}
 
 		var body map[string]interface{}
 		if err := json.Unmarshal(bodyRead, &body); err != nil {
-			http.Error(w, "Error al parsear el cuerpo como JSON", http.StatusBadRequest)
+			http.Error(w, "Error parsing request body", http.StatusBadRequest)
 			return
 		}
 
