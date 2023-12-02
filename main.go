@@ -6,7 +6,9 @@ import (
 )
 
 func main() {
-	app := rouy.New()
+	app := rouy.Rouy{
+		Logger: true,
+	}
 
 	app.Route(rouy.Route{
 		Method: "GET",

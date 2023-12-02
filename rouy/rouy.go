@@ -25,9 +25,8 @@ func FuncResponse(statusCode int, contentType string, body interface{}) *Respons
 }
 
 type Config struct {
-	Host   string
-	Port   string
-	Logger bool
+	Host string
+	Port string
 }
 
 type Rouy struct {
@@ -35,6 +34,7 @@ type Rouy struct {
 	Routes      []Route
 	NotFound    HandleFunc
 	Config      Config
+	Logger      bool
 }
 
 func New() *Rouy {
@@ -101,7 +101,7 @@ func (rouy Rouy) Listen(config Config) error {
 			}
 		}
 
-		if rouy.Config.Logger {
+		if rouy.Logger {
 			fmt.Printf("\n [Rouy Request]\n Method: %s,\n URL: %s,\n Host: %s,\n RemoteAddr: %s,\n Headers: %v,\n Body: %v\n\n",
 				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
 		}
