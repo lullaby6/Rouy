@@ -7,7 +7,7 @@ type Route struct {
 }
 
 func (rouy *Rouy) Route(route Route) *Rouy {
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -18,7 +18,7 @@ func (rouy *Rouy) GET(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -29,7 +29,7 @@ func (rouy *Rouy) POST(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -40,7 +40,7 @@ func (rouy *Rouy) PUT(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -51,7 +51,7 @@ func (rouy *Rouy) DELETE(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -62,7 +62,7 @@ func (rouy *Rouy) PATCH(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -73,7 +73,7 @@ func (rouy *Rouy) HEAD(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -84,7 +84,7 @@ func (rouy *Rouy) OPTIONS(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -95,7 +95,7 @@ func (rouy *Rouy) TRACE(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }
 
@@ -106,6 +106,6 @@ func (rouy *Rouy) CONNECT(path string, handler HandleFunc) *Rouy {
 		Handler: handler,
 	}
 
-	rouy.routes = append(rouy.routes, route)
+	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }

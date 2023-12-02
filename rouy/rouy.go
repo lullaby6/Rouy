@@ -30,13 +30,13 @@ type Config struct {
 }
 
 type Rouy struct {
-	routes []Route
-	config Config
+	Routes []Route
+	Config Config
 	Logger bool
 }
 
 func (rouy Rouy) Listen(config Config) error {
-	rouy.config = config
+	rouy.Config = config
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		bodyRead, err := io.ReadAll(r.Body)
@@ -59,7 +59,7 @@ func (rouy Rouy) Listen(config Config) error {
 				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
 		}
 
-		for _, route := range rouy.routes {
+		for _, route := range rouy.Routes {
 			path := route.Path
 
 			context := Context{
