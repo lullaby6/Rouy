@@ -78,8 +78,9 @@ func main() {
 		Path:   "/mid",
 		Handler: func(ctx rouy.Context) *rouy.Response {
 			fmt.Println("mid 2")
-			return ctx.Text(200, "mid 2")
-			// return nil
+			ctx.Status(300)
+			// return ctx.Text(200, "mid 2")
+			return nil
 		},
 	})
 
@@ -89,12 +90,10 @@ func main() {
 		})
 	}
 
-	config := rouy.Config{
+	err := app.Listen(rouy.Config{
 		Host: "127.0.0.1",
 		Port: "3000",
-	}
-
-	err := app.Listen(config)
+	})
 	if err != nil {
 		fmt.Println(err)
 	}
