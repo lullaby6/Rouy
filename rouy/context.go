@@ -11,6 +11,7 @@ type Context struct {
 	Response http.ResponseWriter
 	Method   string
 	Path     string
+	Body     interface{}
 }
 
 func (context Context) StatusCode(statusCode int) {

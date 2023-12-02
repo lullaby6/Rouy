@@ -6,9 +6,11 @@ import (
 )
 
 func main() {
-	app := rouy.Rouy{}
+	app := rouy.Rouy{
+		Logger: true,
+	}
 
-	app = app.Route(rouy.Route{
+	app.Route(rouy.Route{
 		Method: "GET",
 		Path:   "/json",
 		Handler: func(ctx rouy.Context) *rouy.Response {
@@ -21,7 +23,7 @@ func main() {
 		},
 	})
 
-	app = app.Route(rouy.Route{
+	app.Route(rouy.Route{
 		Method: "GET",
 		Path:   "/json2",
 		Handler: func(ctx rouy.Context) *rouy.Response {
@@ -31,7 +33,7 @@ func main() {
 		},
 	})
 
-	app = app.Route(rouy.Route{
+	app.Route(rouy.Route{
 		Method: "GET",
 		Path:   "/json3",
 		Handler: func(ctx rouy.Context) *rouy.Response {
@@ -41,11 +43,11 @@ func main() {
 		},
 	})
 
-	app = app.GET("/text", func(ctx rouy.Context) *rouy.Response {
+	app.GET("/text", func(ctx rouy.Context) *rouy.Response {
 		return ctx.Text(200, "Hello World!")
 	})
 
-	app = app.GET("/text2", func(ctx rouy.Context) *rouy.Response {
+	app.GET("/text2", func(ctx rouy.Context) *rouy.Response {
 		ctx.Status(201)
 		ctx.Type("text/plain")
 		ctx.Send([]byte("Hello World!"))

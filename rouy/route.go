@@ -6,12 +6,12 @@ type Route struct {
 	Handler HandleFunc
 }
 
-func (rouy Rouy) Route(route Route) Rouy {
+func (rouy *Rouy) Route(route Route) *Rouy {
 	rouy.routes = append(rouy.routes, route)
 	return rouy
 }
 
-func (rouy Rouy) GET(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) GET(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "GET",
 		Path:    path,
@@ -22,7 +22,7 @@ func (rouy Rouy) GET(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) POST(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) POST(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "POST",
 		Path:    path,
@@ -33,7 +33,7 @@ func (rouy Rouy) POST(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) PUT(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) PUT(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "PUT",
 		Path:    path,
@@ -44,7 +44,7 @@ func (rouy Rouy) PUT(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) DELETE(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) DELETE(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "DELETE",
 		Path:    path,
@@ -55,7 +55,7 @@ func (rouy Rouy) DELETE(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) PATCH(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) PATCH(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "PATCH",
 		Path:    path,
@@ -66,7 +66,7 @@ func (rouy Rouy) PATCH(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) HEAD(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) HEAD(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "HEAD",
 		Path:    path,
@@ -77,7 +77,7 @@ func (rouy Rouy) HEAD(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) OPTIONS(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) OPTIONS(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "OPTIONS",
 		Path:    path,
@@ -88,7 +88,7 @@ func (rouy Rouy) OPTIONS(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) TRACE(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) TRACE(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "TRACE",
 		Path:    path,
@@ -99,7 +99,7 @@ func (rouy Rouy) TRACE(path string, handler HandleFunc) Rouy {
 	return rouy
 }
 
-func (rouy Rouy) CONNECT(path string, handler HandleFunc) Rouy {
+func (rouy *Rouy) CONNECT(path string, handler HandleFunc) *Rouy {
 	route := Route{
 		Method:  "CONNECT",
 		Path:    path,

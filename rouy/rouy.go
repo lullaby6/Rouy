@@ -3,6 +3,7 @@ package rouy
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -31,12 +32,30 @@ type Config struct {
 type Rouy struct {
 	routes []Route
 	config Config
+	Logger bool
 }
 
 func (rouy Rouy) Listen(config Config) error {
 	rouy.config = config
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		bodyRead, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
+			return
+		}
+
+		var body map[string]interface{}
+		if err := json.Unmarshal(bodyRead, &body); err != nil {
+			http.Error(w, "Error al parsear el cuerpo como JSON", http.StatusBadRequest)
+			return
+		}
+
+		if rouy.Logger {
+			fmt.Printf("\n [Rouy Request]\n Method: %s,\n URL: %s,\n Host: %s,\n RemoteAddr: %s,\n Headers: %v,\n Body: %v\n\n",
+				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
+		}
+
 		for _, route := range rouy.routes {
 			path := route.Path
 
@@ -46,6 +65,7 @@ func (rouy Rouy) Listen(config Config) error {
 				Query:    r.URL.Query(),
 				Method:   r.Method,
 				Path:     r.URL.Path,
+				Body:     body,
 			}
 
 			if r.Method == route.Method && r.URL.Path == path {
@@ -89,10 +109,13 @@ func (rouy Rouy) Listen(config Config) error {
 	})
 
 	fullUrl := fmt.Sprintf("%s:%s", config.Host, config.Port)
-	fmt.Printf("Listening on %s", fullUrl)
+
+	fmt.Printf("Listening on %s\n", fullUrl)
+
 	err := http.ListenAndServe(fullUrl, nil)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
