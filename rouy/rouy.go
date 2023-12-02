@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+type JSON map[string]interface{}
+
 type Response struct {
 	ContentType string
 	StatusCode  int
@@ -23,8 +25,9 @@ func FuncResponse(statusCode int, contentType string, body interface{}) *Respons
 }
 
 type Config struct {
-	Host string
-	Port string
+	Host   string
+	Port   string
+	Logger bool
 }
 
 type Rouy struct {
@@ -32,7 +35,10 @@ type Rouy struct {
 	Routes      []Route
 	NotFound    HandleFunc
 	Config      Config
-	Logger      bool
+}
+
+func New() *Rouy {
+	return &Rouy{}
 }
 
 func respondeHandler(w http.ResponseWriter, response *Response) bool {
@@ -95,7 +101,7 @@ func (rouy Rouy) Listen(config Config) error {
 			}
 		}
 
-		if rouy.Logger {
+		if rouy.Config.Logger {
 			fmt.Printf("\n [Rouy Request]\n Method: %s,\n URL: %s,\n Host: %s,\n RemoteAddr: %s,\n Headers: %v,\n Body: %v\n\n",
 				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
 		}

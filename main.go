@@ -6,17 +6,15 @@ import (
 )
 
 func main() {
-	app := rouy.Rouy{
-		Logger: true,
-	}
+	app := rouy.New()
 
 	app.Route(rouy.Route{
 		Method: "GET",
 		Path:   "/json",
 		Handler: func(ctx rouy.Context) *rouy.Response {
 			return &rouy.Response{
-				ContentType: "application/json",
-				Body: map[string]interface{}{
+				ContentType: rouy.CT_JSON,
+				Body: rouy.JSON{
 					"hello": "world",
 				},
 			}
@@ -27,7 +25,7 @@ func main() {
 		Method: "GET",
 		Path:   "/json2",
 		Handler: func(ctx rouy.Context) *rouy.Response {
-			return ctx.JSON(200, map[string]interface{}{
+			return ctx.JSON(200, rouy.JSON{
 				"hello": "world2",
 			})
 		},
@@ -37,7 +35,7 @@ func main() {
 		Method: "GET",
 		Path:   "/json3",
 		Handler: func(ctx rouy.Context) *rouy.Response {
-			return rouy.HandleResponse(200, "application/json", map[string]interface{}{
+			return rouy.FuncResponse(200, rouy.CT_JSON, rouy.JSON{
 				"hello": "world3",
 			})
 		},
@@ -49,7 +47,7 @@ func main() {
 
 	app.GET("/text2", func(ctx rouy.Context) *rouy.Response {
 		ctx.Status(201)
-		ctx.Type("text/plain")
+		ctx.Type(rouy.CT_TXT)
 		ctx.Send([]byte("Hello World!"))
 
 		return nil
@@ -85,7 +83,7 @@ func main() {
 	})
 
 	app.NotFound = func(ctx rouy.Context) *rouy.Response {
-		return ctx.JSON(404, map[string]interface{}{
+		return ctx.JSON(404, rouy.JSON{
 			"message": "not found",
 		})
 	}
