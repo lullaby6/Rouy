@@ -28,8 +28,8 @@ type Config struct {
 }
 
 type Rouy struct {
-	Routes      []Route
 	Middlewares []Route
+	Routes      []Route
 	Config      Config
 	Logger      bool
 }
@@ -68,6 +68,22 @@ func respondeHandler(w http.ResponseWriter, response *Response) bool {
 	return true
 }
 
+func requestHandler(routes []Route, w http.ResponseWriter, r *http.Request, context Context) bool {
+	for _, route := range routes {
+		if r.Method == route.Method && r.URL.Path == route.Path {
+			response := route.Handler(context)
+
+			responseHandlerResult := respondeHandler(w, response)
+
+			if responseHandlerResult {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 func (rouy Rouy) Listen(config Config) error {
 	rouy.Config = config
 
@@ -79,7 +95,6 @@ func (rouy Rouy) Listen(config Config) error {
 		}
 
 		var body map[string]interface{}
-
 		if len(bodyRead) > 0 {
 			if err := json.Unmarshal(bodyRead, &body); err != nil {
 				http.Error(w, "Error parsing request body", http.StatusBadRequest)
@@ -92,51 +107,21 @@ func (rouy Rouy) Listen(config Config) error {
 				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
 		}
 
-		for _, middleware := range rouy.Middlewares {
-			path := middleware.Path
-
-			if r.Method == middleware.Method && r.URL.Path == path {
-				context := Context{
-					Request:  r,
-					Response: w,
-					Query:    r.URL.Query(),
-					Method:   r.Method,
-					Path:     r.URL.Path,
-					Body:     body,
-				}
-
-				response := middleware.Handler(context)
-
-				responseHandlerResult := respondeHandler(w, response)
-
-				if responseHandlerResult == true {
-					return
-				}
-			}
-
+		context := Context{
+			Request:  r,
+			Response: w,
+			Query:    r.URL.Query(),
+			Method:   r.Method,
+			Path:     r.URL.Path,
+			Body:     body,
 		}
 
-		for _, route := range rouy.Routes {
-			path := route.Path
+		if requestHandler(rouy.Middlewares, w, r, context) {
+			return
+		}
 
-			if r.Method == route.Method && r.URL.Path == path {
-				context := Context{
-					Request:  r,
-					Response: w,
-					Query:    r.URL.Query(),
-					Method:   r.Method,
-					Path:     r.URL.Path,
-					Body:     body,
-				}
-
-				response := route.Handler(context)
-
-				responseHandlerResult := respondeHandler(w, response)
-
-				if responseHandlerResult == true {
-					return
-				}
-			}
+		if requestHandler(rouy.Routes, w, r, context) {
+			return
 		}
 
 		http.NotFound(w, r)
