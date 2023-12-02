@@ -18,6 +18,7 @@ func main() {
 				ContentType: rouy.CT_JSON,
 				Body: rouy.JSON{
 					"hello": "world",
+					"body":  ctx.Body,
 				},
 			}
 		},
