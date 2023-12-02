@@ -3,7 +3,7 @@ package rouy
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -39,7 +39,7 @@ func (rouy Rouy) Listen(config Config) error {
 	rouy.config = config
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		bodyRead, err := ioutil.ReadAll(r.Body)
+		bodyRead, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
 			return
