@@ -1,5 +1,7 @@
 package rouy
 
+type HandleFunc func(context Context) *Response
+
 type Route struct {
 	Method  string
 	Path    string
@@ -7,6 +9,14 @@ type Route struct {
 }
 
 func (rouy *Rouy) Route(route Route) *Rouy {
+	if route.Path == "" {
+		route.Path = "/"
+	}
+
+	if route.Method == "" {
+		route.Method = "GET"
+	}
+
 	rouy.Routes = append(rouy.Routes, route)
 	return rouy
 }

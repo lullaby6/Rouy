@@ -55,6 +55,33 @@ func main() {
 		return nil
 	})
 
+	app.Middleware(rouy.Route{
+		Method: "GET",
+		Path:   "/mid",
+		Handler: func(ctx rouy.Context) *rouy.Response {
+			fmt.Println("mid 1")
+			return nil
+		},
+	})
+
+	app.Route(rouy.Route{
+		Method: "GET",
+		Path:   "/mid",
+		Handler: func(ctx rouy.Context) *rouy.Response {
+			fmt.Println("mid end")
+			return ctx.Text(200, "mid end")
+		},
+	})
+
+	app.Middleware(rouy.Route{
+		Method: "GET",
+		Path:   "/mid",
+		Handler: func(ctx rouy.Context) *rouy.Response {
+			fmt.Println("mid 2")
+			return nil
+		},
+	})
+
 	config := rouy.Config{
 		Host: "127.0.0.1",
 		Port: "3000",

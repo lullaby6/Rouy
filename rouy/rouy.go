@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-type HandleFunc func(context Context) *Response
-
 type Response struct {
 	ContentType string
 	StatusCode  int
@@ -30,9 +28,44 @@ type Config struct {
 }
 
 type Rouy struct {
-	Routes []Route
-	Config Config
-	Logger bool
+	Routes      []Route
+	Middlewares []Route
+	Config      Config
+	Logger      bool
+}
+
+func respondeHandler(w http.ResponseWriter, response *Response) bool {
+	if response == nil {
+		return false
+	}
+
+	if response.StatusCode == 0 {
+		response.StatusCode = 200
+	}
+
+	if response.ContentType == "" {
+		response.ContentType = "text/plain"
+	}
+
+	w.WriteHeader(response.StatusCode)
+	w.Header().Set("Content-Type", response.ContentType)
+
+	if strings.Contains(response.ContentType, "image") {
+		w.Write(response.Body.([]byte))
+		return true
+	} else if response.ContentType == "application/json" {
+		json.NewEncoder(w).Encode(response.Body)
+		return true
+	} else if response.ContentType == "application/pdf" {
+		w.Write(response.Body.([]byte))
+		return true
+	} else if response.ContentType == "application/zip" {
+		w.Write(response.Body.([]byte))
+		return true
+	}
+
+	w.Write([]byte(response.Body.(string)))
+	return true
 }
 
 func (rouy Rouy) Listen(config Config) error {
@@ -59,52 +92,50 @@ func (rouy Rouy) Listen(config Config) error {
 				r.Method, r.URL, r.Host, r.RemoteAddr, r.Header, body)
 		}
 
+		for _, middleware := range rouy.Middlewares {
+			path := middleware.Path
+
+			if r.Method == middleware.Method && r.URL.Path == path {
+				context := Context{
+					Request:  r,
+					Response: w,
+					Query:    r.URL.Query(),
+					Method:   r.Method,
+					Path:     r.URL.Path,
+					Body:     body,
+				}
+
+				response := middleware.Handler(context)
+
+				responseHandlerResult := respondeHandler(w, response)
+
+				if responseHandlerResult == true {
+					return
+				}
+			}
+
+		}
+
 		for _, route := range rouy.Routes {
 			path := route.Path
 
-			context := Context{
-				Request:  r,
-				Response: w,
-				Query:    r.URL.Query(),
-				Method:   r.Method,
-				Path:     r.URL.Path,
-				Body:     body,
-			}
-
 			if r.Method == route.Method && r.URL.Path == path {
+				context := Context{
+					Request:  r,
+					Response: w,
+					Query:    r.URL.Query(),
+					Method:   r.Method,
+					Path:     r.URL.Path,
+					Body:     body,
+				}
+
 				response := route.Handler(context)
 
-				if response == nil {
+				responseHandlerResult := respondeHandler(w, response)
+
+				if responseHandlerResult == true {
 					return
 				}
-
-				if response.StatusCode == 0 {
-					response.StatusCode = 200
-				}
-
-				if response.ContentType == "" {
-					response.ContentType = "text/plain"
-				}
-
-				w.WriteHeader(response.StatusCode)
-				w.Header().Set("Content-Type", response.ContentType)
-
-				if strings.Contains(response.ContentType, "image") {
-					w.Write(response.Body.([]byte))
-					return
-				} else if response.ContentType == "application/json" {
-					json.NewEncoder(w).Encode(response.Body)
-					return
-				} else if response.ContentType == "application/pdf" {
-					w.Write(response.Body.([]byte))
-					return
-				} else if response.ContentType == "application/zip" {
-					w.Write(response.Body.([]byte))
-					return
-				}
-
-				w.Write([]byte(response.Body.(string)))
-				return
 			}
 		}
 
