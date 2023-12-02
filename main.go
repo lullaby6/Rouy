@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"main/rouy"
+	"net/http"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 		Method: "GET",
 		Path:   "/json2",
 		Handler: func(ctx rouy.Context) *rouy.Response {
-			return ctx.JSON(200, rouy.JSON{
+			return ctx.JSON(http.StatusOK, rouy.JSON{
 				"hello": "world2",
 			})
 		},
@@ -91,7 +92,7 @@ func main() {
 		})
 	}
 
-	err := app.Listen(rouy.Config{
+	err := app.Run(rouy.Config{
 		Host: "127.0.0.1",
 		Port: "3000",
 	})

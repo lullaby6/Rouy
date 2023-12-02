@@ -22,7 +22,7 @@ type Config struct {
 	Port string
 }
 
-func (rouy Rouy) Listen(config Config) error {
+func (rouy Rouy) Run(config Config) error {
 	rouy.Config = config
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +80,14 @@ func (rouy Rouy) Listen(config Config) error {
 
 		http.NotFound(w, r)
 	})
+
+	if rouy.Config.Host == "" {
+		rouy.Config.Host = "localhost"
+	}
+
+	if rouy.Config.Port == "" {
+		rouy.Config.Port = "8080"
+	}
 
 	fullUrl := fmt.Sprintf("%s:%s", config.Host, config.Port)
 
