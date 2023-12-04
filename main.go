@@ -11,6 +11,8 @@ func main() {
 		Logger: true,
 	}
 
+	app.Static("/public/", "./assets")
+
 	app.Route(rouy.Route{
 		Method: "GET",
 		Path:   "/json",
